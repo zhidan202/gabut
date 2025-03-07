@@ -1,0 +1,24 @@
+{
+  "name": "game-tebakan",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "socket.io": "^4.8.1"
+  },
+  "name": "tebak-tebakan",
+  "version": "1.0.0",
+  "main": "server.js",
+  "dependencies": {
+    "socket.io": "^4.0.1"
+  },
+  "scripts": {
+    "start": "node server.js"
+  }
+}

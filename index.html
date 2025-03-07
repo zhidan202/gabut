@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Game Tebak-tebakan</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+        }
+        .container {
+            background: rgba(0, 0, 0, 0.7);
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.3);
+        }
+        input, button {
+            padding: 10px;
+            margin: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 16px;
+        }
+        button {
+            background: #ff4081;
+            color: white;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #e91e63;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Game Tebak-tebakan Multiplayer</h1>
+        <div id="nameSection">
+            <input type="text" id="playerName" placeholder="Masukkan nama Anda">
+            <button onclick="setName()">Lanjut</button>
+        </div>
+        <div id="hostSection" style="display:none;">
+            <input type="text" id="wordInput" placeholder="Masukkan kata rahasia">
+            <button onclick="setHost()">Jadi Host</button>
+        </div>
+        <div id="gameSection" style="display:none;">
+            <input type="text" id="guessInput" placeholder="Masukkan tebakan">
+            <button onclick="sendGuess()">Tebak</button>
+            <p id="message"></p>
+        </div>
+    </div>
+    <script src="https://cdn.socket.io/4.0.1/socket.io.min.js"></script>
+    <script>
+        const socket = io("http://localhost:3000");
+        let playerName = "";
+
+        function setName() {
+            playerName = document.getElementById("playerName").value;
+            if (playerName.trim() === "") {
+                alert("Masukkan nama terlebih dahulu!");
+                return;
+            }
+            document.getElementById("nameSection").style.display = "none";
+            document.getElementById("hostSection").style.display = "block";
+        }
+
+        function setHost() {
+            const word = document.getElementById("wordInput").value;
+            socket.emit("set-host", word);
+            document.getElementById("hostSection").style.display = "none";
+            document.getElementById("gameSection").style.display = "block";
+        }
+
+        function sendGuess() {
+            const guess = document.getElementById("guessInput").value;
+            socket.emit("guess", { name: playerName, guess: guess });
+        }
+
+        socket.on("host-set", (msg) => {
+            document.getElementById("message").innerText = msg;
+            document.getElementById("hostSection").style.display = "none";
+            document.getElementById("gameSection").style.display = "block";
+        });
+
+        socket.on("winner", (msg) => {
+            document.getElementById("message").innerText = msg;
+        });
+
+        socket.on("wrong", (msg) => {
+            document.getElementById("message").innerText = msg;
+        });
+
+        socket.on("reset", (msg) => {
+            document.getElementById("message").innerText = msg;
+            document.getElementById("gameSection").style.display = "none";
+            document.getElementById("hostSection").style.display = "block";
+        });
+    </script>
+</body>
+</html>
